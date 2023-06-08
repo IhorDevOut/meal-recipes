@@ -4,6 +4,6 @@
 
 @layer components {
   .header-link {
-    @apply text-slate-100 hover:text-slate-400 hover:underline;
+    @apply text-slate-900 hover:text-emerald-400 hover:underline;
   }
 }
