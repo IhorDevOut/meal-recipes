@@ -1,17 +1,30 @@
-import { API_URL, API_KEY } from '../utils/constants'
 import { useState, useEffect } from 'react'
 
-export function useRecipes () {
+export function useRecipes ({ id = null }) {
   const [isLoading, setIsLoading] = useState(true)
-  const [data, setData] = useState(null)
   const [error, setError] = useState(null)
+  const [data, setData] = useState(null)
+
+  const appUrl = process.env.REACT_APP_API_URL
+  const appKey = process.env.REACT_APP_API_KEY
+  const appId = process.env.REACT_APP_API_ID
 
   useEffect(() => {
-    console.log('useEffect')
-
     async function getData () {
       try {
-        await new Promise(resolve => setTimeout(resolve, 2000))
+        const url = id
+          ? `${appUrl}/${id}?type=public&app_id=${appId}&app_key=${appKey}`
+          : `${appUrl}/?type=public&app_id=${appId}&app_key=${appKey}&mealType=Breakfast`
+
+        const response = await fetch(url)
+
+        if (!response.ok) throw new Error('Something went wrong')
+
+        const data = await response.json()
+
+        if (!data) throw new Error('No data found')
+
+        setData(data)
       } catch (err) {
         setError(err)
       } finally {
@@ -21,9 +34,6 @@ export function useRecipes () {
 
     getData()
   }, [])
-
-  // const response = await fetch(`${API_URL}/complexSearch?apiKey=${API_KEY}`);
-  // const data = await response.json()
 
   return { isLoading, data, error }
 }

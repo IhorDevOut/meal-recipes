@@ -10,6 +10,7 @@ import { FrontPage } from './pages/FrontPage'
 import { RecipesPage } from './pages/RecipesPage'
 import { BaseLayout } from './components/layout/BaseLayout'
 import { NotFoundPage } from './pages/NotFoundPage'
+import { SingleRecipe } from './pages/SingleRecipe'
 
 const router = createBrowserRouter([
   {
@@ -23,6 +24,10 @@ const router = createBrowserRouter([
       {
         path: '/recipes',
         element: <RecipesPage />
+      },
+      {
+        path: '/recipes/:id',
+        element: <SingleRecipe />
       }
     ]
   },
@@ -34,9 +39,9 @@ const router = createBrowserRouter([
 
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
-  <React.StrictMode>
-    <RouterProvider router={router}>
-      <App />
-    </RouterProvider>
-  </React.StrictMode>
+  // <React.StrictMode>
+  <RouterProvider router={router}>
+    <App />
+  </RouterProvider>
+  // </React.StrictMode>
 )
