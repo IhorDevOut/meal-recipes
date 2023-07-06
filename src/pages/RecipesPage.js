@@ -3,11 +3,14 @@ import { ErrorMessage } from '../components/UI/ErrorMessage'
 import { ListRecipes } from '../components/recipes/ListRecipes'
 import { useRecipes } from '../hooks/useRecipes'
 import { useEffect, useState } from 'react'
+import { SearchBar } from '../components/recipes/SearchBar'
 
 export function RecipesPage () {
-  const { isLoading, data, error } = useRecipes({})
-  const [nextLink, setNextLink] = useState(null)
+  const [query, setQuery] = useState({})
+  const [searchTerm, setSearchTerm] = useState('')
 
+  const { isLoading, data, error } = useRecipes(query)
+  const [nextLink, setNextLink] = useState(null)
   const [recipes, setRecipes] = useState([])
 
   function prepareRecipes (recipe) {
@@ -18,6 +21,12 @@ export function RecipesPage () {
       id: match[1],
       ...recipe
     }
+  }
+
+  function startSearch () {
+    if (!searchTerm || searchTerm.length < 3) return
+
+    setQuery({ term: searchTerm })
   }
 
   useEffect(() => {
@@ -53,7 +62,11 @@ export function RecipesPage () {
   return (
     <>
       <div className='container py-8'>
-        <h1 className='text-3xl font-bold mb-8'>All Recipes</h1>
+        <div className='flex items-center justify-between mb-8'>
+          <h1 className='text-3xl font-bold'>All Recipes</h1>
+
+          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} startSearch={startSearch} />
+        </div>
 
         {
         isLoading
@@ -61,7 +74,7 @@ export function RecipesPage () {
           : error
             ? <ErrorMessage message={error} />
             : <ListRecipes recipes={recipes} />
-      }
+        }
 
         <div className='flex justify-center'>
           <button

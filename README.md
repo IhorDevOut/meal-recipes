@@ -12,3 +12,10 @@
 - Create Error component
 - Conditional rendering
 - Create MealList component
+
+## Plan for a lesson #3
+- Up props from children to parent
+
+## Plan for a lesson #4
+- Context Provider
+- Q: A:
