@@ -3,15 +3,16 @@ import { ErrorMessage } from '../components/UI/ErrorMessage'
 import { ListRecipes } from '../components/recipes/ListRecipes'
 import { useRecipes } from '../hooks/useRecipes'
 import { useEffect, useState } from 'react'
-import { SearchBar } from '../components/recipes/SearchBar'
+import { useFavorites } from '../context/Favorites'
 
-export function RecipesPage () {
-  const [query, setQuery] = useState()
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const { isLoading, data, error } = useRecipes(query)
+export function FavoritesPage () {
+  const [query, setQuery] = useState({})
+  const [canLoad, setCanLoad] = useState(false)
+  const { isLoading, data, error } = useRecipes(query, canLoad)
   const [nextLink, setNextLink] = useState(null)
   const [recipes, setRecipes] = useState([])
+
+  const { favorites } = useFavorites()
 
   function prepareRecipes (recipe) {
     const hashPattern = /recipe_(.*)/
@@ -23,12 +24,6 @@ export function RecipesPage () {
     }
   }
 
-  function startSearch () {
-    if (!searchTerm || searchTerm.length < 3) return
-
-    setQuery({ term: searchTerm })
-  }
-
   useEffect(() => {
     if (data) {
       const initRecipes = data.hits.map(({ recipe }) => prepareRecipes(recipe))
@@ -38,15 +33,37 @@ export function RecipesPage () {
     }
   }, [data])
 
+  useEffect(() => {
+    if (favorites.length) {
+      setQuery({
+        uri: favorites
+      })
+
+      setCanLoad(true)
+    } else {
+      setQuery({})
+      setCanLoad(false)
+    }
+  }, [favorites])
+
   function loadMoreClickHandler (evt) {
     evt.preventDefault()
 
     if (nextLink) {
-      setQuery({
-        url: nextLink
-      })
+      fetch(nextLink)
+        .then(response => response.json())
+        .then(nextData => {
+          const nextRecipes = nextData.hits.map(({ recipe }) => prepareRecipes(recipe))
 
-      setNextLink(null)
+          setNextLink(nextData?._links?.next?.href)
+
+          setRecipes(prevRecipes => {
+            return [
+              ...prevRecipes,
+              ...nextRecipes
+            ]
+          })
+        })
     }
   }
 
@@ -54,9 +71,7 @@ export function RecipesPage () {
     <>
       <div className='container py-8'>
         <div className='flex items-center justify-between mb-8'>
-          <h1 className='text-3xl font-bold'>All Recipes</h1>
-
-          <SearchBar searchTerm={searchTerm} setSearchTerm={setSearchTerm} startSearch={startSearch} />
+          <h1 className='text-3xl font-bold'>Favorites Recipes</h1>
         </div>
 
         {

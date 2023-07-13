@@ -1,8 +1,11 @@
 import clsx from 'clsx'
 import { Link, NavLink } from 'react-router-dom'
 import { Logo } from '../icons/Logo'
+import { useFavorites } from '../../context/Favorites'
 
 export function Header () {
+  const { favorites } = useFavorites()
+
   return (
     <header className='bg-slate-100 py-6'>
       <div className='container flex items-center justify-between'>
@@ -21,7 +24,7 @@ export function Header () {
             }}
           >Recipes
           </NavLink>
-          <Link to='/favorites' className='header-link'>Favorites</Link>
+          <NavLink to='/favorites' className='header-link'>Favorites {favorites.length || ''}</NavLink>
         </nav>
       </div>
     </header>

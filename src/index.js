@@ -11,6 +11,8 @@ import { RecipesPage } from './pages/RecipesPage'
 import { BaseLayout } from './components/layout/BaseLayout'
 import { NotFoundPage } from './pages/NotFoundPage'
 import { SingleRecipe } from './pages/SingleRecipe'
+import { FavoritesPage } from './pages/Favorites'
+import { FavoritesProvider, useFavorites } from './context/Favorites'
 
 const router = createBrowserRouter([
   {
@@ -28,6 +30,10 @@ const router = createBrowserRouter([
       {
         path: '/recipes/:id',
         element: <SingleRecipe />
+      },
+      {
+        path: '/favorites',
+        element: <FavoritesPage />
       }
     ]
   },
@@ -40,8 +46,12 @@ const router = createBrowserRouter([
 const root = ReactDOM.createRoot(document.getElementById('root'))
 root.render(
   // <React.StrictMode>
-  <RouterProvider router={router}>
-    <App />
-  </RouterProvider>
+  <>
+    <FavoritesProvider>
+      <RouterProvider router={router}>
+        <App />
+      </RouterProvider>
+    </FavoritesProvider>
+  </>
   // </React.StrictMode>
 )
